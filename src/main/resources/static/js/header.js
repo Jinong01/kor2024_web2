@@ -28,7 +28,8 @@ const getLoginMid = ( ) =>{
                 //3. 로그아웃 버튼 , 마이페이지 버튼 , 로그인된 아이디 활성화 
                 html +=`<li class="nav-item">  <a class="nav-link" href="#"> ${ data } 님 </a> </li>
                         <li class="nav-item">  <a class="nav-link" href="#" onclick="logOut()"> 로그아웃 </a> </li>
-                        <li class="nav-item">  <a class="nav-link" href="/member/info"> 마이페이지 </a> </li>`
+                        <li class="nav-item">  <a class="nav-link" href="/member/info"> 마이페이지 </a> </li>
+                        <li class="nav-item">  <a class="nav-link"> so </a> </li>`
             }
             // 4. 출력하기 
             memberBox.innerHTML = html;

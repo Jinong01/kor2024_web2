@@ -5,6 +5,9 @@ import korweb.model.dto.MemberDto;
 import lombok.*;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter@Setter@ToString@Builder // 룸복
 @AllArgsConstructor@NoArgsConstructor // 룸복
@@ -27,6 +30,10 @@ public class MemberEntity extends BaseTime {
 
     @Column(  nullable = false , unique = true , columnDefinition = "varchar(50)" )
     private String memail; // 회원이메일
+
+    @OneToMany(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default@ToString.Exclude
+    private List<PointEntity> pointEntityList = new ArrayList<>();
 
     // entity --> dto 변환함수
     public MemberDto toDto(){

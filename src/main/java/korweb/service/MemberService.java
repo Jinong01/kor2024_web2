@@ -4,18 +4,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import korweb.model.dto.MemberDto;
+import korweb.model.dto.PointDto;
 import korweb.model.entity.MemberEntity;
+import korweb.model.entity.PointEntity;
 import korweb.model.repository.MemberRepository;
+import korweb.model.repository.PointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MemberService {
     @Autowired private MemberRepository memberRepository;
+    @Autowired private PointRepository pointRepository;
 
     // 1. 회원가입 서비스
     @Transactional // 트랜잭션
@@ -26,7 +29,10 @@ public class MemberService {
         // 3. save(영속성/연결된) 한 엔티티를 반환 받는다.
         MemberEntity saveEntity = memberRepository.save( memberEntity );
         // 4. 만약에 영속된 엔티티의 회원번호가 0보다 크면 회원가입 성공
-        if( saveEntity.getMno() > 0 ){ return true; }
+        if( saveEntity.getMno() > 0 ){
+            PointDto pointDto = PointDto.builder().pname("회원가입").mpoint(100).build();
+            pointPayment(pointDto,memberEntity);
+            return true;}
         else{ return  false;}
     } // f end
 
@@ -60,6 +66,9 @@ public class MemberService {
         if( result == true ){
             System.out.println("로그인성공");
             setSession( memberDto.getMid() ); // 로그인 성공시 세션에 아이디 저장
+            PointDto pointDto = PointDto.builder().pname("로그인").mpoint(1).build();
+            MemberEntity memberEntity = memberRepository.findById(getMyInfo().getMno()).get();
+            pointPayment(pointDto,memberEntity);
             return true; // 로그인 성공
         }else{
             System.out.println("로그인실패");
@@ -135,6 +144,29 @@ public class MemberService {
         return false;
     } // f end
 
+    // [9] 포인트 지급 함수 .
+    @Transactional
+    public boolean pointPayment(PointDto pointDto, MemberEntity memberEntity){
+        PointEntity pointEntity = pointDto.toEntity();
+        pointEntity.setMemberEntity(memberEntity);
+        PointEntity saveEntity = pointRepository.save(pointEntity);
+        if (saveEntity.getPid() > 0){return true;}
+        else {return false;}
+    }
+
+    // [10] 내 포인트 조회
+    public int getMyPoint(){
+        Optional<MemberEntity> optionalEntity = memberRepository.findById(getMyInfo().getMno());
+        int myPoint = 0;
+        if (optionalEntity.isPresent()){
+            MemberEntity memberEntity = optionalEntity.get();
+            List<PointEntity> pointEntityList = memberEntity.getPointEntityList();
+            for (int index = 0; index <= pointEntityList.size()-1; index++){
+                myPoint += pointEntityList.get(index).getMpoint();
+            }
+        }
+        return myPoint;
+    }
 } // class end
 
 
