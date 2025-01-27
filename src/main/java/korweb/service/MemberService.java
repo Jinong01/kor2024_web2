@@ -167,6 +167,11 @@ public class MemberService {
         }
         return myPoint;
     }
+
+//    // [11] 포인트 내역 조회
+//    public List<PointDto> getPointList() {
+//
+//    }
 } // class end
 
 

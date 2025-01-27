@@ -29,7 +29,7 @@ const getLoginMid = ( ) =>{
                 html +=`<li class="nav-item">  <a class="nav-link" href="#"> ${ data } 님 </a> </li>
                         <li class="nav-item">  <a class="nav-link" href="#" onclick="logOut()"> 로그아웃 </a> </li>
                         <li class="nav-item">  <a class="nav-link" href="/member/info"> 마이페이지 </a> </li>
-                        <li class="nav-item">  <a class="nav-link"> so </a> </li>`
+                        <li class="nav-item">  <a class="nav-link"> 포인트 </a> </li>`
             }
             // 4. 출력하기 
             memberBox.innerHTML = html;
