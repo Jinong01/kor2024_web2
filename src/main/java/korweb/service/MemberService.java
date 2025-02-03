@@ -19,10 +19,25 @@ import java.util.Optional;
 public class MemberService {
     @Autowired private MemberRepository memberRepository;
     @Autowired private PointRepository pointRepository;
+    @Autowired private FileService fileService;
 
     // 1. 회원가입 서비스
     @Transactional // 트랜잭션
     public boolean signup( MemberDto memberDto ){
+
+        // - 프로필 사진 첨부파일이 존재하면 업로드 진행
+            // (1) 만약에 업로드 파일이 비어있으면 dto 에 'default.jpg' 임시용 사진 등록한다
+        if (memberDto.getUploadfile().isEmpty()){
+            memberDto.setMimg("default.jpg");
+        } else { // (2) 업로드 파일이 존재하면, 파일서비스의 업로드 함수를 호출
+            String fileName = fileService.fileUpload(memberDto.getUploadfile());
+            // (3) 만약에 업로드 후 반환된 값이 null 이면 업로드 실패
+            if (fileName == null){ return false; // 업로드 실패하면 회원가입 실패
+            } else {
+                memberDto.setMimg(fileName); // 업로드 성공한 uuid+파일명을 dto 에 대입
+            }
+        }
+
         // 1.  저장할 dto를 entity 로 변환한다.
         MemberEntity memberEntity = memberDto.toEntity();
         // 2. 변환된 entity를 save한다.

@@ -31,6 +31,9 @@ public class MemberEntity extends BaseTime {
     @Column(  nullable = false , unique = true , columnDefinition = "varchar(50)" )
     private String memail; // 회원이메일
 
+    @Column( nullable = false, columnDefinition = "varchar(255)")
+    private String mimg; // 회원 프로필 사진
+
     @OneToMany(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default@ToString.Exclude
     private List<PointEntity> pointEntityList = new ArrayList<>();
@@ -43,6 +46,7 @@ public class MemberEntity extends BaseTime {
                 .mpwd( this.mpwd )
                 .mname( this.mname )
                 .memail( this.memail)
+                .mimg(this.mimg)
                 .build();
     }
 }
