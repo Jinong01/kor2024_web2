@@ -12,6 +12,7 @@ import korweb.model.repository.PointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +46,7 @@ public class MemberService {
         MemberEntity saveEntity = memberRepository.save( memberEntity );
         // 4. 만약에 영속된 엔티티의 회원번호가 0보다 크면 회원가입 성공
         if( saveEntity.getMno() > 0 ){
-            PointDto pointDto = PointDto.builder().pname("회원가입").mpoint(100).build();
+            PointDto pointDto = PointDto.builder().pcontent("회원가입").pcount(100).build();
             pointPayment(pointDto,memberEntity);
             return true;}
         else{ return  false;}
@@ -81,7 +82,7 @@ public class MemberService {
         if( result == true ){
             System.out.println("로그인성공");
             setSession( memberDto.getMid() ); // 로그인 성공시 세션에 아이디 저장
-            PointDto pointDto = PointDto.builder().pname("로그인").mpoint(1).build();
+            PointDto pointDto = PointDto.builder().pcontent("로그인").pcount(1).build();
             MemberEntity memberEntity = memberRepository.findById(getMyInfo().getMno()).get();
             pointPayment(pointDto,memberEntity);
             return true; // 로그인 성공
@@ -165,22 +166,38 @@ public class MemberService {
         PointEntity pointEntity = pointDto.toEntity();
         pointEntity.setMemberEntity(memberEntity);
         PointEntity saveEntity = pointRepository.save(pointEntity);
-        if (saveEntity.getPid() > 0){return true;}
+        if (saveEntity.getPno() > 0){return true;}
         else {return false;}
     }
 
-    // [10] 내 포인트 조회
-    public int getMyPoint(){
-        Optional<MemberEntity> optionalEntity = memberRepository.findById(getMyInfo().getMno());
+    // [10] 내 포인트 지급 전제 내역 조회
+    public List<PointDto> pointList(){
+        // 1. (로그인된) 내정보 가져오기
+        String mid = getSession();
+        MemberEntity memberEntity = memberRepository.findByMid( mid );
+        // 2. 내 포인트 조회하기
+        List<PointEntity> pointEntityList = pointRepository.findByMemberEntity( memberEntity );
+        // 3. 조회된 포인트 엔티티를 dto로 변환
+        List<PointDto> pointDtoList = new ArrayList<>();
+        pointEntityList.forEach( (entity) ->{
+            pointDtoList.add( entity.toDto() );
+        });
+        return  pointDtoList;
+    }
+
+    // [11] 현재 내 포인트 조회
+    public int pointInfo(){
+        // 1. (로그인된) 내정보 가져오기
+        String mid = getSession();
+        MemberEntity memberEntity = memberRepository.findByMid( mid );
+        // 2. 내 포인트 조회하기
+        List<PointEntity> pointEntityList = pointRepository.findByMemberEntity( memberEntity );
+        // 3. 조회된 포인트 엔티티의 합계 구하기.
         int myPoint = 0;
-        if (optionalEntity.isPresent()){
-            MemberEntity memberEntity = optionalEntity.get();
-            List<PointEntity> pointEntityList = memberEntity.getPointEntityList();
-            for (int index = 0; index <= pointEntityList.size()-1; index++){
-                myPoint += pointEntityList.get(index).getMpoint();
-            }
+        for( int index = 0 ; index<=pointEntityList.size()-1 ; index++ ){
+            myPoint += pointEntityList.get(index).getPcount();
         }
-        return myPoint;
+        return  myPoint;
     }
 
 //    // [11] 포인트 내역 조회

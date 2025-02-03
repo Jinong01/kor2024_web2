@@ -4,26 +4,35 @@ import jakarta.persistence.*;
 import korweb.model.dto.PointDto;
 import lombok.*;
 
-@Entity
-@Table(name = "point")
-@Getter@Setter@ToString@Builder@AllArgsConstructor@NoArgsConstructor
-public class PointEntity extends BaseTime{
+import java.time.format.DateTimeFormatter;
 
-    @Id@GeneratedValue(strategy = GenerationType.AUTO)
-    private int pid;
+@Getter@Setter@ToString@Builder // 룸복
+@AllArgsConstructor@NoArgsConstructor // 룸복
+@Entity // 엔티티
+@Table( name = "point") // 테이블명
+public class PointEntity extends BaseTime {
 
-    @Column(columnDefinition = "varchar(30)", nullable = false)
-    private String pname;
+    @Id // pk
+    @GeneratedValue( strategy = GenerationType.IDENTITY ) // auto_increment
+    private int pno; // 포인트 식별자
 
-    @Column(columnDefinition = "int")
-    private int mpoint;
+    @Column( nullable = false  , columnDefinition = "varchar(30)")
+    private String pcontent; // 포인트 지급내용 : 회원가입 , 로그인 , 글쓰기
 
-    @ManyToOne
+    @Column( nullable = false , columnDefinition = "int" )
+    private int pcount; // 포인트 지급수량 : 100 , 1 , -10
+
+    @ManyToOne  // FK
     @JoinColumn(name = "mno")
     private MemberEntity memberEntity;
 
-
+    // entity --> dto 변환함수
     public PointDto toDto(){
-        return PointDto.builder().pname(this.pname).mpoint(this.mpoint).build();
+        return PointDto.builder()
+                .pno( this.pno )
+                .pcontent( this.pcontent )
+                .pcount( this.pcount )
+                .cdate( this.getCdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) )
+                .build();
     }
 }
