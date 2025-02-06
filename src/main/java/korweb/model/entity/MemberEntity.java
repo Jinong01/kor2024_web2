@@ -38,6 +38,13 @@ public class MemberEntity extends BaseTime {
     @Builder.Default@ToString.Exclude
     private List<PointEntity> pointEntityList = new ArrayList<>();
 
+//    @OneToMany(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @Builder.Default@ToString.Exclude
+//    private List<BoardEntity> boardEntityList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "memberEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private List<ReplyEntity> replyEntityList = new ArrayList<>();
+
     // entity --> dto 변환함수
     public MemberDto toDto(){
         return MemberDto.builder()
