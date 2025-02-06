@@ -1,6 +1,7 @@
 package korweb.model.entity;
 
 import jakarta.persistence.*;
+import korweb.model.dto.BoardDto;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -38,4 +39,14 @@ public class BoardEntity extends BaseTime{
     @ManyToOne
     @JoinColumn(name = "cno")
     private CategoryEntity categoryEntity;
+
+    public BoardDto toDto(){
+        return BoardDto.builder().bno(this.bno).btitle(this.btitle)
+                .bcontent(this.bcontent).bview(this.bview)
+                .mno(memberEntity.getMno())
+                .cno(categoryEntity.getCno())
+                .mid(memberEntity.getMid())
+                .cname(categoryEntity.getCname())
+                .cdate(this.getCdate().toString()).build();
+    }
 }
