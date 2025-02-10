@@ -26,7 +26,7 @@ public class FileService {
         // UUID.randomUUID().toString(); : 난수로 UUID 규약의 텍스트 생성
             // 1. UUID 생성
         String uuid = UUID.randomUUID().toString();
-
+        
         // (2) 업로드 경록와 파일명 조합하기, 업로드경로 + uuid + 파일명
             // 2. UUID 의 구분자는 '-' 하이픈 사용하므로 파일명에 하이픈이 존재하면 안된다.
             // -> 파일명에 '-'하이픈은 모두 '_'언더바로 변경

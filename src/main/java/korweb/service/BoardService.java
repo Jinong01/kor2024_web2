@@ -49,14 +49,18 @@ public class BoardService {
         else {return false;}
     }
 
-    public List<BoardDto> boardFindAll() {
+    public List<BoardDto> boardFindAll(int cno) {
         List<BoardEntity> boardEntityList = boardRepository.findAll();
+            // * cno 를 이용한 동일한 cno 의 게시물 정보 찾기
         List<BoardDto> list = new ArrayList<>();
-        list = boardEntityList.stream().map(BoardEntity::toDto)
-                    .collect(Collectors.toList());
-        // boardEntityList.forEach(entity -> {
-        //      BoardDto boardDto = entity.toDto();
-        //      list.add(boardDto);})
+//        list = boardEntityList.stream()
+//                .map(BoardEntity::toDto)
+//                .collect(Collectors.toList());
+        boardEntityList.forEach(entity -> {
+              if(entity.getCategoryEntity().getCno()==cno){
+              BoardDto boardDto = entity.toDto();
+              list.add(boardDto);}
+            });
         return list;
     }
 

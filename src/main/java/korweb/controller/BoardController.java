@@ -16,8 +16,11 @@ public class BoardController {
     @PostMapping("/board/write.do")
     public boolean boardWrite(@RequestBody BoardDto boardDto){return boardService.write(boardDto);}
 
+//    @GetMapping("/board/findall.do")
+//    public List<BoardDto> boardFindAll(){return boardService.boardFindAll();}
+
     @GetMapping("/board/findall.do")
-    public List<BoardDto> boardFindAll(){return boardService.boardFindAll();}
+    public List<BoardDto> boardFindAll(@RequestParam int cno){return boardService.boardFindAll(cno);}
 
     @GetMapping("/board/find.do")
     public BoardDto boardFind(@RequestParam int bno){return boardService.boardFind(bno);}
