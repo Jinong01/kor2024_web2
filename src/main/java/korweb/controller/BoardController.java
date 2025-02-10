@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class BoardController {
@@ -30,4 +31,11 @@ public class BoardController {
 
     @DeleteMapping("/board/delete.do")
     public boolean boardDelete(@RequestParam int bno){return boardService.boardDelete(bno);}
+
+    // ======================= 댓글 =============================
+    @PostMapping("/reply/write.do")
+    public boolean replyWrite(@RequestBody Map<String,String> replyDto){return boardService.replyWrite(replyDto);}
+
+    @GetMapping("/reply/findall.do")
+    public List<Map<String ,String>> replyFindAll(@RequestParam int bno){return boardService.replyFindAll(bno);}
 }
