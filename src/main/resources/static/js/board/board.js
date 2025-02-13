@@ -15,10 +15,13 @@ console.log(new URL(location.href).searchParams.get('cno'));
 const findAll = () =>{
     // 1. 현재 페이지 URL 에서 매개변수 cno 값 구하기
     const cno = new URL(location.href).searchParams.get('cno')
+    // 현재 페이지의 URL 에서 매개변수 page 값 구하기
+    let page = new URL(location.href).searchParams.get('page');
+    if(page == null) page = 1;
     // 2. fetch option
     const option = {method : 'GET'}
     // 3. fetch
-    fetch(`/board/findall.do?cno=${cno}`,option)
+    fetch(`/board/findall.do?cno=${cno}&page=${page}`,option)
     .then(r => r.json())
     .then(d => {
         // 4. 요청 결과 응답 자료 확인
@@ -28,7 +31,10 @@ const findAll = () =>{
         // 6. 출력할 html 를 저장하는 변수 선언
         let html = ``
         // 7. 응답 자료를 반복문 이용하여 하나씩 순회해서 html 누적으로 더해주기
-        d.forEach(board => {
+            // + 응답 자료에서 게시물 리스트 추출
+            // data = {data : []}
+        let boardList = d.data;
+        boardList.forEach(board => {
             html += `<tr>
                         <td> ${board.bno}</td>
                         <td> <a href="/board/view?bno=${board.bno}"> ${board.btitle} </a> </td>
@@ -40,8 +46,33 @@ const findAll = () =>{
         });
         // 8. 반복문 종료후 html 변수에 누적된 <tr> 출력하기
         tbody.innerHTML = html;
+        // 9. 게시물 출력 후 페이징 버튼 생성 함수 호출
+        printPageNation(d, cno)
     })
     .catch(e => console.log(e))
 }
 
 findAll();
+
+// [2] 페이징버튼 생성하는 함수
+const printPageNation = (d,cno) => {
+    let page = d.page; // 현재페이지
+    let totalpage = d.totalpage;
+    let startbtn = d.startbtn;
+    let endbtn = d.endbtn;
+    // (1) 어디에
+    const pagebox = document.querySelector('.pagebox')
+    // (2) 무엇을
+    let html = ``
+    // 이전 버튼, 현재 페이지에서 -1 차감한 페이지 이동, 만약에 0이면 1페이지로 고정
+    html += `<li class="page-item"><a class="page-link" href="/board?cno=${cno}&page=${page <= 1? 1 : page-1}">Previous</a></li>`
+    // 페이징 버튼, 반복무 이용하여 startbtn 부터 endbtn 까지
+    for(let index = startbtn; index <= endbtn; index++){
+    // 만약 현재 페이지와 버튼번호가 같다면 .active 부트스트랩 클래스 부여
+    html +=
+    `<li class="page-item"><a class="page-link ${page==index?'active' : ''}" href="/board?cno=${cno}&page=${index}">${index}</a></li>`}
+    // 다음 버튼, 현재 페이지에서 +1 증가한 페이지 이동, 만약에 전체페이지수보다 크면 전체페이지 수로 고정
+    html += `<li class="page-item"><a class="page-link" href="/board?cno=${cno}&page=${page >= totalpage? totalpage : page+1}">Next</a></li>`
+    // (3) 출력
+    pagebox.innerHTML = html
+}

@@ -2,6 +2,7 @@ package korweb.service;
 
 import korweb.model.dto.BoardDto;
 import korweb.model.dto.MemberDto;
+import korweb.model.dto.PageDto;
 import korweb.model.entity.BoardEntity;
 import korweb.model.entity.CategoryEntity;
 import korweb.model.entity.MemberEntity;
@@ -11,10 +12,13 @@ import korweb.model.repository.CategoryRepository;
 import korweb.model.repository.MemberRepository;
 import korweb.model.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class BoardService {
@@ -53,9 +57,18 @@ public class BoardService {
     }
 
     // [2]
-    public List<BoardDto> boardFindAll(int cno) {
-        List<BoardEntity> boardEntityList = boardRepository.findAll();
+    public PageDto boardFindAll(int cno, int page, String key, String keyWord) {
+        // 페이징 처리 방법 : 1. SQL 2. 라이브러리(JPA)
+        Pageable pageable = PageRequest.of(page-1,3, Sort.by(Sort.Direction.DESC,"bno"));
+        // find~~(pageable) -> 반환타입이 Page<>
+
+        // List<BoardEntity> boardEntityList = boardRepository.findAll();
+//        Page<BoardEntity> boardEntityList = boardRepository.findAll(pageable);
+        // 카테고리를 먼저 조회하고 페이징처리 해야댐
+        // Page<BoardEntity> boardEntityList = boardRepository.findByCategoryEntity_Cno(cno,pageable);
             // * cno 를 이용한 동일한 cno 의 게시물 정보 찾기
+        // 특정한 카테고리의 키워드 검색 조회 + 페이징 처리
+        Page<BoardEntity> boardEntityList = boardRepository.findBySearch(cno, key, keyWord, pageable);
         List<BoardDto> list = new ArrayList<>();
 //        list = boardEntityList.stream()
 //                .map(BoardEntity::toDto)
@@ -65,7 +78,23 @@ public class BoardService {
               BoardDto boardDto = entity.toDto();
               list.add(boardDto);}
             });
-        return list;
+//        return list;
+        // 페이징 처리된 게시물 정보(자료) 와 페이징 정보도 같이 반환한다.
+        // (1) 현재 페이지 번호 = page
+        // (2) 전체 페이지 번호 = totalPage, JPA 가 제공
+        int totalPage = boardEntityList.getTotalPages(); // 조회된 정보의 전체 페이지수 반환 함수
+        // (3) 전체 조회된 수 = totalCount, .getTotalElements() : 조회된 정보의 전체 개수 반환 함수
+        long totalCount = boardEntityList.getTotalElements();
+
+        int btnSize = 5; // 페이지당 표시할 페이징 버튼수
+        // (4) 조회 페이지의 페이징버튼 시작번호 : ((현재페이지번호-1)/페이징버튼수)*페이징버튼수+1
+        int startBtn = ((page-1)/btnSize)*btnSize+1;
+        // (5) 조회 페이지의 페이징 버튼 끝번호 : 시작버튼번호+(페이징버튼수+1)
+        int endBtn = startBtn+(btnSize-1);
+        // 만약에 마지막 페이징버튼 끝번호는 전체 페이지수보다 커질 수 없다.
+        if (endBtn>=totalPage) endBtn = totalPage;
+        PageDto pageDto = PageDto.builder().page(page).totalpage(totalPage).totalcount(totalCount).startbtn(startBtn).endbtn(endBtn).data(list).build();
+        return pageDto; // PageDto 의 data 안에 boardDtoList 가 있으므로 반환 타입 변경
     }
 
     // [3]

@@ -1,6 +1,7 @@
 package korweb.controller;
 
 import korweb.model.dto.BoardDto;
+import korweb.model.dto.PageDto;
 import korweb.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,10 @@ public class BoardController {
 //    public List<BoardDto> boardFindAll(){return boardService.boardFindAll();}
 
     @GetMapping("/board/findall.do")
-    public List<BoardDto> boardFindAll(@RequestParam int cno){return boardService.boardFindAll(cno);}
+    public PageDto boardFindAll(@RequestParam int cno, @RequestParam int page
+            , @RequestParam String key, @RequestParam String keyWord){
+        // key = 검색할데이터의 속성명 (btitle,bcontent), keyWord = 검색할 데이터
+        return boardService.boardFindAll(cno, page, key, keyWord);}
 
     @GetMapping("/board/find.do")
     public BoardDto boardFind(@RequestParam int bno){return boardService.boardFind(bno);}
