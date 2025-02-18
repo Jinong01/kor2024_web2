@@ -36,7 +36,21 @@
 
       </ul>
     </nav>
-
+    <!--검색창-->
+    <div class="row">  <!--row : 부트스트랩 css, 하위요소들 가로배치-->
+      <div class="col-auto"> <!--col-auto : 부트스트랩 css, 해당요소 가로사이즈 자동-->
+        <select class="form-select key"> <!--form-select : 부트스트랩 css, 목록상자 꾸미기-->
+          <option value="btitle">제목</option>
+          <option value="bcontent">내용</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-auto">
+        <input type="text" class="form-control keyword"> <!--form-control : 입력상자 꾸미기-->
+    </div>
+    <div class="col-auto">
+      <button type="button" class="btn btn-primary" onclick="onSearch()">검색</button> <!--btn btn-primary : 버튼 꾸미기-->
+    </div>
   </div>
 
   <script src="/js/board/board.js"></script>

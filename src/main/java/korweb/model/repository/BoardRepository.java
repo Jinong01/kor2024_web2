@@ -17,7 +17,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
     // 1. findBy 필드명 (int 필드명)
     // Page<BoardEntity> findByCno(int cno, Pageable pageable);
     // 만약에 cno 가 참조키(fk) 일 때는 fk 필드명 넣지않고 엔티티 필드명을 넣는다
-    Page<BoardEntity> findByCategoryEntity_Cno(int cno, Pageable pageable);
+        Page<BoardEntity> findByCategoryEntity_Cno(int cno, Pageable pageable);
 
     // [2] JPA nativeQuery (실제 DB 의 SQL 문법) 이용한 조회
         // 1. 특정한 카테고리 번호에 해당하는 모든 게시물 조회
