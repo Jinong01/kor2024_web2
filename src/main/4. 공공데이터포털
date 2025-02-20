@@ -1,0 +1,12 @@
+[ 활용 가능한 API ]
+    1. 공공데이터포털(정부) : http://www.data.go.kr/
+    2. 여행(정부) : http://api.visitkorea.or.kr
+    3. 영화(정부) : https://www.kobis.or.kr/kobisopenapi/homepg/main/main.do
+    4. 아파트(정부) : https://rt.molit.go.kr/
+    5. 카카오(로그인/지도) : https://developers.kakao.com/
+    6. 네이버 : https://developers.naver.com/main/
+    7. 결제 : https://portone.io/korea/ko
+    등등
+
+[ 공공데이터 포털 ]
+    1. [로그인] (네이버/카카오) 로그인 진행
