@@ -43,6 +43,9 @@ public class ViewController {
     // [9] 공공데이터 API 페이지를 반환 해주는 메소드
     @GetMapping("/api1")
     public String api1(){return "/api/api1.html";}
+
+    @GetMapping("/api2")
+    public String api2(){return "/api/api2.html";}
 } // class end
 
 
