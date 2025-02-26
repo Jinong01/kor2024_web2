@@ -3,16 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="/css/chat.css"/>
 </head>
 <body>
     <div th:replace="~{/header.html :: header}"></div>
     <div class="container">
         <h3>채팅방</h3>
         <div class="채팅내용구역">
+<!--            <div class="secontent">&lt;!&ndash;보낸메시지&ndash;&gt;-->
+<!--                <span class="date">오전 10:07</span>-->
+<!--                <span class="content">안녕하세요.</span>-->
+<!--            </div>-->
+<!--            <div class="alarm">&lt;!&ndash;알림메시지&ndash;&gt;-->
+<!--                <span>강호동 님이 입장 했습니다.</span>-->
+<!--            </div>-->
 
+<!--            <div class="receiveBox">&lt;!&ndash;받은 메시지&ndash;&gt;-->
+<!--                <div class="profileImg">-->
+<!--                    <img src="/img/default.jpg"/>-->
+<!--                </div>-->
+<!--                <div>-->
+<!--                    <div class="recontent">-->
+<!--                        <div class="memberNic">강호동</div>-->
+<!--                        <span class="content">안녕하세요2</span>-->
+<!--                        <span>오전 10:07</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
-        <input type="text" class="메시지작성구역"/>
-        <button type="button" onclick="메시지전송()">전송</button>
+        <div class="bottomBox">
+            <input onkeyup="enterKey()" type="text" class="메시지작성구역"/>
+            <button type="button" onclick="메시지전송()">전송</button>
+        </div>
     </div>
     <script src="/js/api/chat.js"></script>
 </body>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="korweb.model.mapper.ProductMapper">
+    <insert id="save" parameterType="korweb.model.dto.ProductDto">
+        insert into products (name,price) values (#{name},#{price})
+    </insert>
+
+    <select id="findAll">
+        select * from products
+    </select>
+
+    <select id="find">
+        select * from products where id = #{id}
+    </select>
+
+    <update id="update">
+        update products set name = #{name} , price = #{price} where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from products where id = #{id}
+    </delete>
+</mapper>

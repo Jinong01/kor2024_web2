@@ -26,6 +26,9 @@ const getLoginMid = ( ) =>{
             memberBox.innerHTML = html;
             // 5. 포인트 지급 불러오기
              myPointInto();
+
+            
+    
         })
         .catch( error => {   console.log( error); console.log( '비로그인상태');
             // 3. 회원가입 버튼 , 로그인 버튼 활성화

@@ -1,0 +1,42 @@
+[ DAO : JDBC ] : java database connection
+    - 자바에서 데이터베이스 와 상호착용 하기 위한 java 표준 라이브러리
+    - SQL 직접 작성하고 실행하며 데이터베이스 연결과 관리한다.
+    - 주요 인터페이스
+        1. Connection       : 데이터베이스 연결 관리
+        2. PreparedStatement: SQL 실행과 매개변수 관리
+        3. ResultSet        : SQL 실행 결과(조회 데이터) 관리
+
+[ JPA vs mybatis ]
+    - 실무에서는 어떠한 기능을 더 요구하나요? 과거에는 mybatis 많았고 요즘에는 JPA 가 더 많은 추세
+    - 대규모 프로젝트에서는 2개 같이 혼용에서 사용함
+
+[ mybatis ]
+    - 객체와 데이터베이스 간의 SQL 매핑을 자동으로 해주는 프레임워크
+    - 주요 특징
+        1. SQL 매핑 : SQL 을 XML 파일과 어노테이션에 작성하여 자바 객체와 매핑
+        2. 결과 매핑 : SQL 쿼리 결과를 자동으로 자바 객체로 자동 타입변환
+        3. 유연성 : 복잡한 쿼리나 제어도 가능하다.
+        4. 스프링과 통합 가능하다
+    - 사용법
+        1. Project 내 mybatis 를 설치한다 -> mybatis / MYSQL JDBC 의존성 적용
+        2. application.properties
+            [ JDBC 연동 ]
+            [ SQL 이 작성된 .xml 파일 경로 설정 ] , xml 파일 이용하여 자바 객체와 매핑하는 기술
+                mybatis.mapper-locations = classpath:mybatis/mapper/*.xml
+                *.xml 파일이 존재하는 경로를 설정, * = 와일드카드 라는 뜻(모든 .xml 을 뜻함)
+        3. mybatis 활용
+            - 인터페이스 파일 생성한다.
+            - 해당 인터페이스 위에 @Mapper 주입한다
+            - 해당 인터페이스 내 각 기능 SQL 별 추상메소드 작성한다
+                반환타입 메소드명 (매개변수타입 매개변수명);
+                *주의할점 , 자동지원
+                1] 매개변수타입 과 매개변수명은 SQL 문에서 사용가능한 변수, #{매개변수}
+                    int bno ===>> "select from board where bno = #{bno}"
+                    BoardDto boardDto ===>> insert into board (title, content) values (#{title1}, #{content1})
+                        !!!!! : BoardDto boardDto ===>BoardDto boardDto ===>> "insert into board( title , content)values( #{ title } , #{ content } )"
+                        !!!! : BoardDto안에 있는 멤버변수만 SQL매개변수로 사용이 가능하다.
+                            즉] BoardDto에 title 과 content 존재하므로 SQL매개변수가 가능하다.
+                2] 반환타입은 자동으로 타입변환 해준다.
+                int ===>> sql 처리된 레코드 수 반환
+                boolean ===>> sql 처리 성공 여부 반환
+                List< DTO > ===>> sql 처리 결과 자동으로 DTO 반환
