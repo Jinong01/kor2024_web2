@@ -141,3 +141,14 @@ values
 ("포인트를 쓰는 방법이 친절해서 좋아요.", 19, 4, now(), now()),
 ("상품 반품 절차가 복잡하지 않아서 좋았어요.", 20, 5, now(), now());
 
+CREATE TABLE student (
+    sno INT AUTO_INCREMENT,              -- 학생 번호 (자동 증가)
+    name VARCHAR(50) NOT NULL,           -- 이름
+    kor INT NOT NULL,                    -- 국어 점수
+    math INT NOT NULL,                    -- 수학 점수
+    CONSTRAINT  PRIMARY KEY (sno)  -- 기본키 제약 조건 추가
+);
+
+INSERT INTO student (name, kor, math) VALUES ('김철수', 90, 85);
+INSERT INTO student (name, kor, math) VALUES ('이영희', 78, 92);
+INSERT INTO student (name, kor, math) VALUES ('박민수', 88, 76);
