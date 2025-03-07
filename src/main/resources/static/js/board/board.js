@@ -59,36 +59,36 @@ const findAll = () =>{
 
 findAll();
 
-// [2] 페이징버튼 생성하는 함수
-const printPageNation = (d,cno, key, keyword) => {
-    let page = d.page; // 현재페이지
-    let totalpage = d.totalpage;
-    let startbtn = d.startbtn;
-    let endbtn = d.endbtn;
-    // (1) 어디에
-    const pagebox = document.querySelector('.pagebox')
-    // (2) 무엇을
-    let html = ``
-    // 이전 버튼, 현재 페이지에서 -1 차감한 페이지 이동, 만약에 0이면 1페이지로 고정
-    html += `<li class="page-item"><a class="page-link" href="/board?cno=${cno}&page=${page <= 1? 1 : page-1}&key=${key}&keyWord=${keyword}">Previous</a></li>`
-    // 페이징 버튼, 반복무 이용하여 startbtn 부터 endbtn 까지
-    for(let index = startbtn; index <= endbtn; index++){
-    // 만약 현재 페이지와 버튼번호가 같다면 .active 부트스트랩 클래스 부여
-    html +=
-    `<li class="page-item"><a class="page-link ${page==index?'active' : ''}" href="/board?cno=${cno}&page=${index}">${index}</a></li>`}
-    // 다음 버튼, 현재 페이지에서 +1 증가한 페이지 이동, 만약에 전체페이지수보다 크면 전체페이지 수로 고정
-    html += `<li class="page-item"><a class="page-link" href="/board?cno=${cno}&page=${page >= totalpage? totalpage : page+1}&key=${key}&keyWord=${keyword}">Next</a></li>`
-    // (3) 출력
-    pagebox.innerHTML = html
-}
+    // [2] 페이징버튼 생성하는 함수
+    const printPageNation = (d,cno, key, keyword) => {
+        let page = d.page; // 현재페이지
+        let totalpage = d.totalpage;
+        let startbtn = d.startbtn;
+        let endbtn = d.endbtn;
+        // (1) 어디에
+        const pagebox = document.querySelector('.pagebox')
+        // (2) 무엇을
+        let html = ``
+        // 이전 버튼, 현재 페이지에서 -1 차감한 페이지 이동, 만약에 0이면 1페이지로 고정
+        html += `<li class="page-item"><a class="page-link" href="/board?cno=${cno}&page=${page <= 1? 1 : page-1}&key=${key}&keyWord=${keyword}">Previous</a></li>`
+        // 페이징 버튼, 반복무 이용하여 startbtn 부터 endbtn 까지
+        for(let index = startbtn; index <= endbtn; index++){
+        // 만약 현재 페이지와 버튼번호가 같다면 .active 부트스트랩 클래스 부여
+        html +=
+        `<li class="page-item"><a class="page-link ${page==index?'active' : ''}" href="/board?cno=${cno}&page=${index}">${index}</a></li>`}
+        // 다음 버튼, 현재 페이지에서 +1 증가한 페이지 이동, 만약에 전체페이지수보다 크면 전체페이지 수로 고정
+        html += `<li class="page-item"><a class="page-link" href="/board?cno=${cno}&page=${page >= totalpage? totalpage : page+1}&key=${key}&keyWord=${keyword}">Next</a></li>`
+        // (3) 출력
+        pagebox.innerHTML = html
+    }
 
-// [3] 검색 버튼을 클릭 했을때 함수
-const onSearch = ( ) => {
-    // 1. 선택한 검색필드 와 입력받은 검색어 가져오기
-    const key = document.querySelector('.key').value
-    const keyword = document.querySelector('.keyword').value
-    // 2. 현재 카테고리 번호 를 URL 에서 가져오기  // 검색 기능 실행시 현재 카테고리를 유지 하기 위해
-    const cno = new URL( location.href ).searchParams.get('cno');
-    // 3. 입력받은 검색필드 와 입력받은 검색어로 이동한다. cno는 유지 , 검색후 결과는 1페이지 설정
-    location.href = `board?cno=${ cno }&page=1&key=${ key }&keyWord=${ keyword }`
-}
+    // [3] 검색 버튼을 클릭 했을때 함수
+    const onSearch = ( ) => {
+        // 1. 선택한 검색필드 와 입력받은 검색어 가져오기
+        const key = document.querySelector('.key').value
+        const keyword = document.querySelector('.keyword').value
+        // 2. 현재 카테고리 번호 를 URL 에서 가져오기  // 검색 기능 실행시 현재 카테고리를 유지 하기 위해
+        const cno = new URL( location.href ).searchParams.get('cno');
+        // 3. 입력받은 검색필드 와 입력받은 검색어로 이동한다. cno는 유지 , 검색후 결과는 1페이지 설정
+        location.href = `board?cno=${ cno }&page=1&key=${ key }&keyWord=${ keyword }`
+    }

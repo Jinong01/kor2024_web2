@@ -70,6 +70,12 @@
                         즉] TaskService3 클래스의 모든 메소드 뜻
                     5. ("execution( * TaskService3.*(..) )")
                         (..) : 지정한 메소드들의 매개변수 타입, (..) , 모든 타입 매개변수 뜻
+        4] 모듈 함수에서 인자값을 받는 법
+            @Before( "문법 && args( 매개변수명 )" )
+            public void 함수명( Object 매개변수명 ) { }
+        5] 모듈 함수에서 리턴값 받는법
+            @AfterReturning(value="문법", returning = "리턴매개변수명")
+            public void 함수명 (Object 매개변수명){}
 
 [ POJO ] : Plain Old Java Object : 특정한 프레임워크나 라이브러리를 의존하지 않고 순수한 자바 객체
 
