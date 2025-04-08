@@ -66,9 +66,127 @@
         3. 개발 단계
             1. CSRF 전체 끄기 , http.csrf(AbstractHttpConfigurer :: disable );
 
-    6.
+    6. 로그인
+        1. 시큐리티 설정클래스 에서 '로그인' 관련된 설정 코드 작성한다.
+            http.formLogin( loginForm -> loginForm
+                            .loginPage("/member/login") // 로그인을 할 view page url 정의
+                            .loginProcessingUrl("/member/login.do") // 로그인을 처리할 요청 URL 정의 // POST 방식
+                            .usernameParameter("mid")   // 로그인에 사용할 id 변수명
+                            .passwordParameter("mpwd")  // 로그인에 사용한 password 변수명
+                            //.defaultSuccessUrl("/") // 만약에 로그인 성공시 이동할 page url 정의
+                            //.failureUrl("/member/login") // 만약에 로그인 실패시 이동할 page url 정의
 
+                            // --> Fetch/Axios ( json형식 ) 에서는 아래와 같은 방법으로 사용한다.
+                            .successHandler( ( request , response , exception ) -> {
+                                System.out.println("로그인 성공!!!");
+                                response.setContentType("application/json"); // 응답 방식을 JSON 변경
+                                response.getWriter().println("true"); // JSON 형식의 true 응답하기.
+                            })
+                            .failureHandler( ((request, response, exception) -> {
+                                System.out.println("로그인 실패!!!");
+                                response.setContentType("application/json"); // 응답 방식을 JSON 변경
+                                response.getWriter().println("false"); // JSON 형식의 false 응답하기.
+                            }))
 
+        2. 로그인시 암호화된 패스워드를 검증할 암호화 클래스 정의 , 암호화 에서 사용된 클래스를 그대로 정의
+            @Bean
+            public PasswordEncoder encoder(){  return new BCryptPasswordEncoder(); }
 
+        3. 시큐리티 설정클래스 에서 '로그아웃' 관련된 설정 코드 작성한다.
+            http.logout( logout -> logout
+                    .logoutUrl( "/member/logout.do") // 로그아웃 처리할 요청 URL 정의 //  GET방식
+                    .logoutSuccessUrl("/") // 만약에 로그아웃 성공시 이동할 page url 정의
+                    .invalidateHttpSession(true) // 만약에 로그아웃 성공시 (로그인)세션 초기화
+            );
 
-================================ 소셜 로그인 ==========================================
+        4. '로그인' 관련 코드를 재정의하는 서비스  , 해당 서비스에서 로그인 처리
+        http.userDetailsService(  memberService );
+            -> 해당 memberService 에서 'loadUserByUsername' 메소드 재정의(구현)
+            -> loadUserByUsername 에서 입력받은 id 와 입력받은 id의 암호화된 패스워드를 UserDetails 반환한다.
+            -> UserDetails 리턴된 id와 암호화된 패스워드가 시큐리티가 자동으로 검증한다.
+                -> 로그인 성공하면 시큐리티 세션 저장
+                -> 로그인 실패하면 시큐리티 세션 저장 X
+
+        5. '로그인' 시큐리티 세션 확인 하는 방법 ,
+            1. SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                (1) SecurityContextHolder : 현재 인증된 사용자의 내용들을 저장하는 클래스
+                (2) .getContext() : 현재 인증된 사용자의 내용들을 반환하는 메소드
+                (3) .getAuthentication() : 현재 인증된 사용자의 인증 정보를 반환 메소드
+                (4) .getPrincipal() : 현재 인증된 사용자의 주요 정보를 반환하는 메소드 , 반환타입 : Object
+                즉] 현재 인증된 사용자의 인증 주요 정보를 반환하는 코드
+
+            2. 반환된 인증 주요 정보를 확인
+                - anonymousUser : 비로그인상태 ,
+                - anonymousUser 아니면 : 로그인상태
+                (1) UserDetails userDetails = (UserDetails)Object;     // 현재 로그인된 회원의 인증정보를 타입변환
+                (2) String loginMid = userDetails.getUsername()        // 현재 로그인된 회원의 아이디 반환
+        ====================================================================================================
+
+    7. Oauth2
+        1. 정의 : 제 3자 애플리케이션에서 사용자의 비밀번호를 직접 제공받지 않고도 인증 과 권한 부여
+        2. 목적 : 인증 과 인가
+        3. Oauth2 서비스 제공 회사 : 구글,페이스북,카카오,네이버 등등
+
+        [1] oauth2 라이브러리 설치 , https://start.spring.io/
+            implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+        [2] 각 회사별 oauth2 설정
+            1. [카카오]
+                1. 카카오 개발자 센터 : https://developers.kakao.com/
+                2. 로그인 후 -> [ 내 애플리케이션 ] -> 전체 애플리케이션 에서 생성한 애플리케이션 선택
+                3. 사이드바 메뉴 확인
+                    [ 앱키 ] REST API (본인)키 (확인) : 937f0beba62febee4bcd586825470681
+                    [ 플랫폼 ] Web 사이트 도메인 (추가) : http://localhost:8080
+                    [ 카카오 로그인 ]
+                        활성화 설정 : ON
+                        Redirect URI (추가) : http://localhost:8080/login/oauth2/code/kakao
+                            * 카카오에서 로그인 성공하면 반환할 url 정의하는곳
+                    [ 동의 항목 ]
+                        1. 닉네임 -> [설정] -> 필수 동의 선택 -> 동의 목적 : 테스트
+                        2. 프로필 사진 -> [설정] -> 필수 동의 선택 -> 동의 목적 : 테스트
+                            * 권한없음 은 사업자(비지니스) 등록후 심사 하면 가능하다
+                    [ 보안 ] , 비지니스보안X
+                        Client Secret -> 1. [ 코드 생성 ] -> 2.활성화 상태 : 사용함
+                        (확인) YXAvvUiYSeUbXtgdpLu0qlyfLBPcTUPJ
+            2. [네이버]
+            3. [구글]
+
+        [3] HTML 에서 카카오 로그인 링크 <a> 마크업 만들기
+            ( login.html )
+                <a href="/oauth2/authorization/kakao"> 카카오로그인 </a>
+                <a href="/oauth2/authorization/naver"> 네이버로그인 </a>
+                <a href="/oauth2/authorization/google"> 구글로그인 </a>
+
+        [4] application.properties 에서 각 소셜 연동 코드 작성한다.
+            1. [카카오]
+                # [ OATUH2 카카오 ] : https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api
+                spring.security.oauth2.client.registration.kakao.client-id =REST앱키넣어주세요.
+                spring.security.oauth2.client.registration.kakao.client-secret =보안키넣어주세요.
+                spring.security.oauth2.client.registration.kakao.scope=동의항목ID명,동의항목ID명
+
+                spring.security.oauth2.client.registration.kakao.client-authentication-method=client_secret_post
+                spring.security.oauth2.client.registration.kakao.authorization-grant-type=authorization_code
+                spring.security.oauth2.client.registration.kakao.redirect-uri={baseUrl}/login/oauth2/code/{registrationId}
+
+                spring.security.oauth2.client.provider.kakao.authorization-uri=https://kauth.kakao.com/oauth/authorize
+                spring.security.oauth2.client.provider.kakao.token-uri=https://kauth.kakao.com/oauth/token
+                spring.security.oauth2.client.provider.kakao.user-info-uri=https://kapi.kakao.com/v2/user/me
+                spring.security.oauth2.client.provider.kakao.user-name-attribute=id
+
+        [5] 시큐리티 설정 클래스 에서 oauth2 로그인 페이지 와 서비스 정의하기
+            http.oauth2Login( oauth2Login -> {
+               oauth2Login
+                       .loginPage("/member/login") // oauth2 실행할 URL 페이지 정의
+                       // oauth2 에서 로그인 성공시 유저 정보를 받을 객체 정의
+                       .userInfoEndpoint( userinfo -> {  userinfo.userService( memberService );   } );
+            });
+
+        [6] memberSerive 클래스에서 oauth2 관련 인터페이스 구현/재정의
+            1. memberService 클래스에 OAuth2UserService< OAuth2UserRequest , OAuth2User > 인터페이스를 구현 한다.
+                public class MemberService implements UserDetailsService , OAuth2UserService< OAuth2UserRequest , OAuth2User > { }
+
+            2. 'loadUser' 추상메소드를 재정의한다.
+                @Override
+                public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+                    return null;
+                }

@@ -35,6 +35,9 @@ dependencies {
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
     // [8] security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    // [9] Oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
 
 
 }

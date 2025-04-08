@@ -16,7 +16,7 @@ const getLoginMid = ( ) =>{
             //3. 로그아웃 버튼 , 마이페이지 버튼 , 로그인된 아이디 활성화
             html +=`<li class="nav-item">
                         <a class="nav-link" href="#">
-                            <img src="/img/${ data.mimg }" style=" width:60px; height:60px; padding: 1px; object-fit: cover; border-radius: 30px;  border:1px solid #bfbebe;" />
+                            <img src="${data.mimg.includes('http') ? data.mimg : '/img/'+data.mimg}" style=" width:60px; height:60px; padding: 1px; object-fit: cover; border-radius: 30px;  border:1px solid #bfbebe;" />
                             ${ data.mid }님
                         <span class="pointbox"> </span> </a>
                     </li>
@@ -43,16 +43,20 @@ getLoginMid(); // JS 실행될때. 로그인 정보 요청 함수 호출
 
 // [2] 로그아웃 함수
 const logOut = ( ) => {
-    // 1. fetch option
-    const option = { method : 'GET' }
-    // 2. fetch
-    fetch( '/member/logout.do' , option )
-        .then( response => response.json() )
-        .then( data => {
-            // 만약에 로그아웃 성공 했다면 로그인 페이지로 이동
-            if( data == true ){ alert('로그아웃 했습니다.'); location.href="/member/login"; }
-        })
-        .catch( e => { console.log(e); })
+    // 시큐리티 사용 이후에는 fetch 로 로그아웃이 아닌 get 방식으로 시큐리티 로그아웃을 요청한다.
+    location.href="/member/logout.do";
+
+//  이하 코드는 시큐리티 이후에는 사용 x
+//    // 1. fetch option
+//    const option = { method : 'GET' }
+//    // 2. fetch
+//    fetch( '/member/logout.do' , option )
+//        .then( response => response.json() )
+//        .then( data => {
+//            // 만약에 로그아웃 성공 했다면 로그인 페이지로 이동
+//            if( data == true ){ alert('로그아웃 했습니다.'); location.href="/member/login"; }
+//        })
+//        .catch( e => { console.log(e); })
 } // f end
 
 // [3] 내 포인트 함수
